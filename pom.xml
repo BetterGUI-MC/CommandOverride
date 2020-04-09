@@ -6,7 +6,7 @@
 
   <groupId>me.hsgamer.bettergui</groupId>
   <artifactId>CommandOverride</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
   <packaging>jar</packaging>
 
   <name>CommandOverride</name>
@@ -20,6 +20,7 @@
 
   <build>
     <defaultGoal>clean package</defaultGoal>
+    <finalName>${project.name}</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
