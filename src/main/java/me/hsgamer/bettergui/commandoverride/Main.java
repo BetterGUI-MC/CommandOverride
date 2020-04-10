@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import me.hsgamer.bettergui.object.addon.Addon;
 import me.hsgamer.bettergui.util.CaseInsensitiveStringMap;
-import org.bukkit.command.defaults.BukkitCommand;
+import org.bukkit.command.Command;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -42,7 +42,7 @@ public final class Main extends Addon {
           command = SPACE_PATTERN.split(command)[0];
         }
 
-        Map<String, BukkitCommand> menuCommand = getPlugin().getCommandManager()
+        Map<String, Command> menuCommand = getPlugin().getCommandManager()
             .getRegisteredMenuCommand();
         if (caseInsensitive) {
           menuCommand = new CaseInsensitiveStringMap<>(menuCommand);
