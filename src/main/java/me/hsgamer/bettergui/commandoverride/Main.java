@@ -1,5 +1,6 @@
 package me.hsgamer.bettergui.commandoverride;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.regex.Pattern;
 import me.hsgamer.bettergui.object.addon.Addon;
@@ -37,9 +38,11 @@ public final class Main extends Addon {
           return;
         }
 
-        String command = event.getMessage().substring(1);
-        if (ignoreArgs) {
-          command = SPACE_PATTERN.split(command)[0];
+        String[] split = SPACE_PATTERN.split(event.getMessage().substring(1));
+        String command = split[0];
+        String[] args = new String[0];
+        if (split.length > 1 && !ignoreArgs) {
+          args = Arrays.copyOfRange(split, 1, split.length);
         }
 
         Map<String, Command> menuCommand = getPlugin().getCommandManager()
@@ -50,7 +53,7 @@ public final class Main extends Addon {
 
         if (menuCommand.containsKey(command)) {
           event.setCancelled(true);
-          menuCommand.get(command).execute(event.getPlayer(), command, new String[0]);
+          menuCommand.get(command).execute(event.getPlayer(), command, args);
         }
       }
     });
