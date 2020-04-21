@@ -1,6 +1,9 @@
 package me.hsgamer.bettergui.commandoverride;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import me.hsgamer.bettergui.object.addon.Addon;
@@ -14,14 +17,14 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 public final class Main extends Addon {
 
   private static final Pattern SPACE_PATTERN = Pattern.compile(" ");
-  private boolean ignoreArgs = false;
+  private final List<String> ignoredCommands = new ArrayList<>();
   private boolean caseInsensitive = true;
 
   @Override
   public boolean onLoad() {
     setupConfig();
     getConfig().options().copyDefaults(true);
-    getConfig().addDefault(Settings.IGNORED_ARGS, false);
+    getConfig().addDefault(Settings.IGNORED_COMMANDS, Collections.singletonList("warp test"));
     getConfig().addDefault(Settings.CASE_INSENSITIVE, true);
     saveConfig();
     return true;
@@ -29,7 +32,7 @@ public final class Main extends Addon {
 
   @Override
   public void onEnable() {
-    ignoreArgs = getConfig().getBoolean(Settings.IGNORED_ARGS, false);
+    ignoredCommands.addAll(getConfig().getStringList(Settings.IGNORED_COMMANDS));
     caseInsensitive = getConfig().getBoolean(Settings.CASE_INSENSITIVE, true);
     registerListener(new Listener() {
       @EventHandler(priority = EventPriority.HIGHEST)
@@ -38,10 +41,15 @@ public final class Main extends Addon {
           return;
         }
 
-        String[] split = SPACE_PATTERN.split(event.getMessage().substring(1));
+        String rawCommand = event.getMessage().substring(1);
+        if (ignoredCommands.stream().anyMatch(s -> s.equalsIgnoreCase(rawCommand))) {
+          return;
+        }
+
+        String[] split = SPACE_PATTERN.split(rawCommand);
         String command = split[0];
         String[] args = new String[0];
-        if (split.length > 1 && !ignoreArgs) {
+        if (split.length > 1) {
           args = Arrays.copyOfRange(split, 1, split.length);
         }
 
@@ -62,13 +70,14 @@ public final class Main extends Addon {
   @Override
   public void onReload() {
     reloadConfig();
-    ignoreArgs = getConfig().getBoolean(Settings.IGNORED_ARGS, false);
+    ignoredCommands.clear();
+    ignoredCommands.addAll(getConfig().getStringList(Settings.IGNORED_COMMANDS));
     caseInsensitive = getConfig().getBoolean(Settings.CASE_INSENSITIVE, true);
   }
 
   private static final class Settings {
 
-    static final String IGNORED_ARGS = "ignore-args";
+    static final String IGNORED_COMMANDS = "ignore-commands";
     static final String CASE_INSENSITIVE = "case-insensitive";
   }
 }
