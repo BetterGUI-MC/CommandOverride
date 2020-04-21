@@ -42,7 +42,8 @@ public final class Main extends Addon {
         }
 
         String rawCommand = event.getMessage().substring(1);
-        if (ignoredCommands.stream().anyMatch(s -> s.equalsIgnoreCase(rawCommand))) {
+        if (ignoredCommands.stream().anyMatch(s ->
+            caseInsensitive ? s.equalsIgnoreCase(rawCommand) : s.equals(rawCommand))) {
           return;
         }
 
